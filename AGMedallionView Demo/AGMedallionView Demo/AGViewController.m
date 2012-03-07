@@ -2,6 +2,8 @@
 //  AGViewController.m
 //  AGMedallionView Demo
 //
+//  Modified by Charles Powell on 3/6/12.
+//
 //  Created by Artur Grigor on 2/12/12.
 //  Copyright (c) 2012 Artur Grigor. All rights reserved.
 //
@@ -41,6 +43,17 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    
+    self.medallionView.style = AGMedallionStyleSquare;
+    self.medallionView.cornerRadius = 20.0f;
+    self.medallionView.shadowOffset = CGSizeMake(0.0, 1.0);
+    self.medallionView.shadowBlur = 5.0f;
+    
+    CGFloat colors[8] = {0.925, 0.953, 0.992, 1.000, 0.451, 0.482, 0.522, 1.000};
+    CGFloat colorStops[2] = {1.f, 0.f};
+    CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
+    CGGradientRef newGradient = CGGradientCreateWithColorComponents(rgbColorSpace, colors, colorStops, 2);
+    self.medallionView.borderGradient = newGradient;
     
     self.medallionView.image = [UIImage imageNamed:@"sample"];
     [self.medallionView addTarget:self action:@selector(medallionDidTap:) forControlEvents:UIControlEventTouchUpInside];

@@ -2,6 +2,8 @@
 //  AGMedallionView.m
 //  AGMedallionView
 //
+//  Modified by Charles Powell on 3/6/12.
+//
 //  Created by Artur Grigor on 1/23/12.
 //  Copyright (c) 2012 Artur Grigor. All rights reserved.
 //  
@@ -23,7 +25,11 @@
 
 @interface AGMedallionView (Private)
 
+// Helper methods
 - (void)setup;
+
+// Helper functions
+void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
 
 @end
 
@@ -31,7 +37,16 @@
 
 #pragma mark - Properties
 
-@synthesize image, borderColor, borderWidth, shadowColor, shadowOffset, shadowBlur;
+@synthesize style, image, borderColor, borderWidth, borderGradient, cornerRadius, shadowColor, shadowOffset, shadowBlur;
+
+- (void)setStyle:(AGMedallionStyle)aStyle
+{
+    if (style != aStyle) {
+        style = aStyle;
+        
+        [self setNeedsDisplay];
+    }
+}
 
 - (void)setImage:(UIImage *)aImage
 {
@@ -57,6 +72,24 @@
 {
     if (borderWidth != aBorderWidth) {
         borderWidth = aBorderWidth;
+        
+        [self setNeedsDisplay];
+    }
+}
+
+- (void)setBorderGradient:(CGGradientRef)aBorderGradient
+{
+    if (borderGradient != aBorderGradient) {
+        borderGradient = aBorderGradient;
+        
+        [self setNeedsDisplay];
+    }
+}
+
+- (void)setCornerRadius:(CGFloat)aCornerRadius
+{
+    if (cornerRadius != aCornerRadius) {
+        cornerRadius = aCornerRadius;
         
         [self setNeedsDisplay];
     }
@@ -194,16 +227,27 @@
     
     // Create main mask shape
     CGContextMoveToPoint(mainMaskContextRef, 0, 0);
-    CGContextAddEllipseInRect(mainMaskContextRef, imageRect);
+    if (self.style == AGMedallionStyleSquare && self.cornerRadius > 0.0f) {
+        addRoundedRect(mainMaskContextRef, imageRect, self.cornerRadius);
+    } else {
+        CGContextAddEllipseInRect(mainMaskContextRef, imageRect);
+    }
     CGContextFillPath(mainMaskContextRef);
+    
     // Create shine mask shape
     CGContextTranslateCTM(shineMaskContextRef, -(rect.size.width / 4), rect.size.height / 4 * 3);
     CGContextRotateCTM(shineMaskContextRef, -45.f);
     CGContextMoveToPoint(shineMaskContextRef, 0, 0);
+    CGFloat shineHeight;
+    if (self.style == AGMedallionStyleSquare && self.cornerRadius > 0.0f) {
+        shineHeight = rect.size.height * 1.5;
+    } else {
+        shineHeight = rect.size.height;
+    }
     CGContextFillRect(shineMaskContextRef, CGRectMake(0, 
                                                       0, 
                                                       rect.size.width / 8 * 5, 
-                                                      rect.size.height));
+                                                      shineHeight));
     
     CGImageRef mainMaskImageRef = CGBitmapContextCreateImage(mainMaskContextRef);
     CGImageRef shineMaskImageRef = CGBitmapContextCreateImage(shineMaskContextRef);
@@ -243,14 +287,61 @@
     CGContextSetLineWidth(contextRef, self.borderWidth);
     CGContextSetStrokeColorWithColor(contextRef, self.borderColor.CGColor);
     CGContextMoveToPoint(contextRef, 0, 0);
-    CGContextAddEllipseInRect(contextRef, imageRect);
+    if (self.style == AGMedallionStyleSquare && self.cornerRadius > 0.0f) {
+        addRoundedRect(contextRef, imageRect, self.cornerRadius);
+    } else {
+        CGContextAddEllipseInRect(contextRef, imageRect);
+    }
+    
     // Drop shadow
     CGContextSetShadowWithColor(contextRef, 
                                 self.shadowOffset, 
                                 self.shadowBlur, 
                                 self.shadowColor.CGColor);
+    
+    /*
+    CGContextReplacePathWithStrokedPath(contextRef);
+    CGContextClip(contextRef);
+    // Draw border gradient
+    CGContextDrawLinearGradient(contextRef, self.borderGradient, CGPointMake(0, 0), CGPointMake(0, self.bounds.size.height), 0);
+    */
+    
     CGContextStrokePath(contextRef);
     CGContextRestoreGState(contextRef);
+    
+    
+}
+
+void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius) {
+    if (cornerRadius <= 2.0) {
+        CGContextAddRect(ctx, rect);
+    } else {
+        float x_left = rect.origin.x;
+        float x_left_center = x_left + cornerRadius;
+        float x_right_center = x_left + rect.size.width - cornerRadius;
+        float x_right = x_left + rect.size.width;
+        float y_top = rect.origin.y;
+        float y_top_center = y_top + cornerRadius;
+        float y_bottom_center = y_top + rect.size.height - cornerRadius;
+        float y_bottom = y_top + rect.size.height;
+        /* Begin path */
+        CGContextBeginPath(ctx);
+        CGContextMoveToPoint(ctx, x_left, y_top_center);
+        /* First corner */
+        CGContextAddArcToPoint(ctx, x_left, y_top, x_left_center, y_top, cornerRadius);
+        CGContextAddLineToPoint(ctx, x_right_center, y_top);
+        /* Second corner */
+        CGContextAddArcToPoint(ctx, x_right, y_top, x_right, y_top_center, cornerRadius);
+        CGContextAddLineToPoint(ctx, x_right, y_bottom_center);
+        /* Third corner */
+        CGContextAddArcToPoint(ctx, x_right, y_bottom, x_right_center, y_bottom, cornerRadius);
+        CGContextAddLineToPoint(ctx, x_left_center, y_bottom);
+        /* Fourth corner */
+        CGContextAddArcToPoint(ctx, x_left, y_bottom, x_left, y_bottom_center, cornerRadius);
+        CGContextAddLineToPoint(ctx, x_left, y_top_center);
+        /* Done */
+        CGContextClosePath(ctx);
+    }
 }
 
 @end

@@ -2,6 +2,8 @@
 //  AGMedallionView.h
 //  AGMedallionView
 //
+//  Modified by Charles Powell on 3/6/12
+//
 //  Created by Artur Grigor on 1/23/12.
 //  Copyright (c) 2012 Artur Grigor. All rights reserved.
 //  
@@ -21,11 +23,21 @@
 
 #import <UIKit/UIKit.h>
 
+typedef enum
+{
+    AGMedallionStyleOriginal = 0,
+    AGMedallionStyleSquare
+    
+} AGMedallionStyle;
+
 @interface AGMedallionView : UIControl
 {
+    AGMedallionStyle style;
     UIImage *image;
     UIColor *borderColor;
     CGFloat borderWidth;
+    CGGradientRef borderGradient;
+    CGFloat cornerRadius;
     UIColor *shadowColor;
     CGSize shadowOffset;
     CGFloat shadowBlur;
@@ -35,9 +47,12 @@
     CGGradientRef alphaGradient;
 }
 
+@property (nonatomic, assign) AGMedallionStyle style;
 @property (nonatomic, retain) UIImage *image;
 @property (nonatomic, retain) UIColor *borderColor;
 @property (nonatomic, assign) CGFloat borderWidth;
+@property (nonatomic, assign) CGGradientRef borderGradient;
+@property (nonatomic, assign) CGFloat cornerRadius;
 @property (nonatomic, retain) UIColor *shadowColor;
 @property (nonatomic, assign) CGSize shadowOffset;
 @property (nonatomic, assign) CGFloat shadowBlur;
