@@ -29,7 +29,6 @@
 - (void)setup;
 
 // Helper functions
-void drawBorderPath(CGContextRef ctx, CGRect rect);
 void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
 
 @end

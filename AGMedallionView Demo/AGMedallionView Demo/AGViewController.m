@@ -85,10 +85,11 @@
 
 - (void)medallionDidTap:(id)sender
 {
-    
+    /*
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Tap" message:@"Medallion has been tapped." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [alertView show];
     [alertView release];
+    */
     
     if (self.medallionView.style == AGMedallionStyleOriginal) {
         
@@ -108,6 +109,7 @@
         
         self.medallionView.style = AGMedallionStyleOriginal;
         self.medallionView.addShine = YES;
+        self.medallionView.borderGradient = NULL;
         
     }
     
