@@ -25,6 +25,16 @@ medallionView.image = [UIImage imageNamed:@"sample"];
 [medallionView release];
 ```
 
+To use a rounded rect medallion, initialize as follows:
+
+``` objective-c
+AGMedallionView *medallionView = [[AGMedallionView alloc] init];
+medallionView.style = AGMedallionStyleSquare;
+medallionView.cornerRadius = 20.0f;
+medallionView.image = [UIImage imageNamed:@"sample"];
+[self.view addSubview:medallionView];
+[medallionView release];
+
 ## Contact
 
 - [GitHub](http://github.com/arturgrigor)
