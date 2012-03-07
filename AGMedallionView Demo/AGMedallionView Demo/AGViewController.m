@@ -94,6 +94,7 @@
         
         self.medallionView.style = AGMedallionStyleSquare;
         self.medallionView.cornerRadius = 20.0f;
+        self.medallionView.addShine = NO;
         self.medallionView.shadowOffset = CGSizeMake(0.0, 1.0);
         self.medallionView.shadowBlur = 5.0f;
         
@@ -106,6 +107,7 @@
     } else if (self.medallionView.style == AGMedallionStyleSquare) {
         
         self.medallionView.style = AGMedallionStyleOriginal;
+        self.medallionView.addShine = YES;
         
     }
     

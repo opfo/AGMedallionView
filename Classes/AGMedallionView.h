@@ -38,6 +38,7 @@ typedef enum
     CGFloat borderWidth;
     CGGradientRef borderGradient;
     CGFloat cornerRadius;
+    BOOL addShine;
     UIColor *shadowColor;
     CGSize shadowOffset;
     CGFloat shadowBlur;
@@ -53,6 +54,7 @@ typedef enum
 @property (nonatomic, assign) CGFloat borderWidth;
 @property (nonatomic, assign) CGGradientRef borderGradient;
 @property (nonatomic, assign) CGFloat cornerRadius;
+@property (nonatomic, assign) BOOL addShine;
 @property (nonatomic, retain) UIColor *shadowColor;
 @property (nonatomic, assign) CGSize shadowOffset;
 @property (nonatomic, assign) CGFloat shadowBlur;
