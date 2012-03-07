@@ -48,7 +48,12 @@ medallionView.borderGradient = newGradient;
 
 ## Contact
 
+Artur Grigor
 - [GitHub](http://github.com/arturgrigor)
 - [Twitter](http://twitter.com/arturgrigor)
 
-Let me know if you're using or enjoying this product.
+Charles Powell
+- [GitHub](http://github.com/cbpowell)
+- [Twitter](http://twitter.com/seventhcolumn)
+
+Let me (us!) know if you're using or enjoying this product.
