@@ -34,6 +34,7 @@ medallionView.cornerRadius = 20.0f;
 medallionView.image = [UIImage imageNamed:@"sample"];
 [self.view addSubview:medallionView];
 [medallionView release];
+```
 
 ## Contact
 
