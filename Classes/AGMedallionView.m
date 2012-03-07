@@ -285,7 +285,6 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
     CGContextRestoreGState(contextRef);
     
     CGContextSetLineWidth(contextRef, self.borderWidth);
-    CGContextSetStrokeColorWithColor(contextRef, self.borderColor.CGColor);
     CGContextMoveToPoint(contextRef, 0, 0);
     if (self.style == AGMedallionStyleSquare && self.cornerRadius > 0.0f) {
         addRoundedRect(contextRef, imageRect, self.cornerRadius);
@@ -293,23 +292,33 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
         CGContextAddEllipseInRect(contextRef, imageRect);
     }
     
-    // Drop shadow
-    CGContextSetShadowWithColor(contextRef, 
-                                self.shadowOffset, 
-                                self.shadowBlur, 
-                                self.shadowColor.CGColor);
-    
-    /*
-    CGContextReplacePathWithStrokedPath(contextRef);
-    CGContextClip(contextRef);
-    // Draw border gradient
-    CGContextDrawLinearGradient(contextRef, self.borderGradient, CGPointMake(0, 0), CGPointMake(0, self.bounds.size.height), 0);
-    */
-    
-    CGContextStrokePath(contextRef);
-    CGContextRestoreGState(contextRef);
-    
-    
+    if (self.borderGradient != NULL) {
+        // Stroke colored path to draw shadow
+        CGContextSetStrokeColorWithColor(contextRef, [UIColor whiteColor].CGColor);
+        CGContextSetShadowWithColor(contextRef, 
+                                    self.shadowOffset, 
+                                    self.shadowBlur, 
+                                    self.shadowColor.CGColor);
+        CGContextStrokePath(contextRef);
+        // Recreate path in context
+        CGContextMoveToPoint(contextRef, 0, 0);
+        addRoundedRect(contextRef, imageRect, self.cornerRadius);
+        // Create fillable path
+        CGContextReplacePathWithStrokedPath(contextRef);
+        CGContextClip(contextRef);
+        // Draw border gradient
+        CGContextDrawLinearGradient(contextRef, self.borderGradient, CGPointMake(0, 0), CGPointMake(0, self.bounds.size.height), 0);
+        // Restore state
+        CGContextRestoreGState(contextRef);
+    } else {
+        CGContextSetStrokeColorWithColor(contextRef, self.borderColor.CGColor);
+        CGContextSetShadowWithColor(contextRef, 
+                                    self.shadowOffset, 
+                                    self.shadowBlur, 
+                                    self.shadowColor.CGColor);
+        CGContextStrokePath(contextRef);
+        CGContextRestoreGState(contextRef);
+    }
 }
 
 void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius) {

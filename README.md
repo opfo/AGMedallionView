@@ -36,6 +36,16 @@ medallionView.image = [UIImage imageNamed:@"sample"];
 [medallionView release];
 ```
 
+You can also specify a gradient for the medallion border by specifying a CGGradientRef as shown:
+
+``` objective-c
+CGFloat colors[8] = {0.925, 0.953, 0.992, 1.000, 0.451, 0.482, 0.522, 1.000};
+CGFloat colorStops[2] = {1.f, 0.f};
+CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
+CGGradientRef newGradient = CGGradientCreateWithColorComponents(rgbColorSpace, colors, colorStops, 2);
+medallionView.borderGradient = newGradient;
+```
+
 ## Contact
 
 - [GitHub](http://github.com/arturgrigor)
