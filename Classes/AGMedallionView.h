@@ -58,5 +58,6 @@ typedef enum
 @property (nonatomic, retain) UIColor *shadowColor;
 @property (nonatomic, assign) CGSize shadowOffset;
 @property (nonatomic, assign) CGFloat shadowBlur;
+@property (nonatomic, assign) BOOL clipShadow;
 
 @end
