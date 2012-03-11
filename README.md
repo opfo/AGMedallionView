@@ -46,6 +46,8 @@ CGGradientRef newGradient = CGGradientCreateWithColorComponents(rgbColorSpace, c
 medallionView.borderGradient = newGradient;
 ```
 
+To handle shadow offsets that are pushed outside the view's rect (therefore getting chopped off), you can set the `clipShadow = YES`.
+
 ## Contact
 
 Artur Grigor

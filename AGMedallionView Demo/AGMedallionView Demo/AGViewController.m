@@ -96,8 +96,9 @@
         self.medallionView.style = AGMedallionStyleSquare;
         self.medallionView.cornerRadius = 20.0f;
         self.medallionView.addShine = NO;
-        self.medallionView.shadowOffset = CGSizeMake(0.0, 1.0);
-        self.medallionView.shadowBlur = 5.0f;
+        self.medallionView.shadowOffset = CGSizeMake(1.0, 2.0);
+        self.medallionView.shadowBlur = 3.0f;
+        self.medallionView.clipShadow = YES;
         
         CGFloat colors[8] = {0.925, 0.953, 0.992, 1.000, 0.451, 0.482, 0.522, 1.000};
         CGFloat colorStops[2] = {1.f, 0.f};
@@ -110,6 +111,9 @@
         self.medallionView.style = AGMedallionStyleOriginal;
         self.medallionView.addShine = YES;
         self.medallionView.borderGradient = NULL;
+        self.medallionView.shadowOffset = CGSizeMake(0, 1);
+        self.medallionView.shadowBlur = 2.f;
+        self.medallionView.clipShadow = NO;
         
     }
     
