@@ -219,6 +219,7 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
                                                         rect.size.width, 
                                                         maskColorSpaceRef, 
                                                         0);
+
     CGContextRef shineMaskContextRef = CGBitmapContextCreate(NULL,
                                                              rect.size.width, 
                                                              rect.size.height, 
@@ -275,7 +276,7 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
     CGContextSaveGState(contextRef);
     
     // Draw image
-    CGContextDrawImage(contextRef, rect, imageRef);
+    CGContextDrawImage(contextRef, CGRectInset(rect, self.borderWidth/2 - 0.5, self.borderWidth/2 - 0.5), imageRef);
     
     CGContextRestoreGState(contextRef);
     CGContextSaveGState(contextRef);
@@ -296,95 +297,89 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
     
 
     
-     if (self.borderGradient != NULL) {
-          CGContextMoveToPoint(contextRef, 0, 0);
-          
-          if (self.clipShadow) {
-               // Add slightly expanded paths equating to outer border
-               if (self.style == AGMedallionStyleSquare && self.cornerRadius > 0.0f) {
-                    addRoundedRect(contextRef, 
-                                   CGRectMake(imageRect.origin.x - self.borderWidth/2, 
-                                                          imageRect.origin.y - self.borderWidth/2,
-                                                          imageRect.size.width + self.borderWidth, 
-                                                          imageRect.size.height + self.borderWidth), 
-                                   self.cornerRadius + (float)self.borderWidth/2);
-               } else {
-                    CGContextAddEllipseInRect(contextRef, CGRectMake(imageRect.origin.x - self.borderWidth/2, 
-                                                                     imageRect.origin.y - self.borderWidth/2,
-                                                                     imageRect.size.width + self.borderWidth, 
-                                                                     imageRect.size.height + self.borderWidth));
-               }
-               // Apply path to clip
-               CGContextClip(contextRef);
-          }
-          
-          // Draw sub-path for the shadow
-          // Save state to restore after
-          CGContextSaveGState(contextRef);
-          // Setup path
-          CGContextSetLineWidth(contextRef, self.borderWidth);
-          if (self.style == AGMedallionStyleSquare && self.cornerRadius > 0.0f) {
-               addRoundedRect(contextRef, imageRect, self.cornerRadius);
-          } else {
-               CGContextAddEllipseInRect(contextRef, imageRect);
-          }
-          CGContextSetLineWidth(contextRef, MAX(self.borderWidth - 0.5, 0));
-          CGContextSetStrokeColorWithColor(contextRef, [UIColor whiteColor].CGColor);
-          CGContextSetShadowWithColor(contextRef, 
-                                      self.shadowOffset, 
-                                      self.shadowBlur, 
-                                      self.shadowColor.CGColor);
-          CGContextStrokePath(contextRef);
-          CGContextRestoreGState(contextRef);
-          
-          // Recreate path in context
-          CGContextMoveToPoint(contextRef, 0, 0);
-          CGContextSetLineWidth(contextRef, self.borderWidth);
-          if (self.style == AGMedallionStyleSquare) {
-               addRoundedRect(contextRef, imageRect, self.cornerRadius);
-          } else {
-               CGContextAddEllipseInRect(contextRef, imageRect);
-          }
-          // Create fillable path
-          CGContextReplacePathWithStrokedPath(contextRef);
-          CGContextClip(contextRef);
-          // Draw border gradient
-          CGContextDrawLinearGradient(contextRef, self.borderGradient, CGPointMake(0, 0), CGPointMake(0, self.bounds.size.height), 0);
-     } else {
-          
-          CGContextMoveToPoint(contextRef, 0, 0);
-          if (self.clipShadow) {
-               // Add slightly expanded paths equating to outer border
-               if (self.style == AGMedallionStyleSquare && self.cornerRadius > 0.0f) {
-                    addRoundedRect(contextRef, 
-                                   CGRectMake(imageRect.origin.x - self.borderWidth/2, 
-                                              imageRect.origin.y - self.borderWidth/2,
-                                              imageRect.size.width + self.borderWidth, 
-                                              imageRect.size.height + self.borderWidth), 
-                                   self.cornerRadius + (float)self.borderWidth/2);
-               } else {
-                    CGContextAddEllipseInRect(contextRef, CGRectMake(imageRect.origin.x - self.borderWidth/2, 
-                                                                     imageRect.origin.y - self.borderWidth/2,
-                                                                     imageRect.size.width + self.borderWidth, 
-                                                                     imageRect.size.height + self.borderWidth));
-               }
-               // Apply path to clip
-               CGContextClip(contextRef);
-          }
-          
-          CGContextSetLineWidth(contextRef, self.borderWidth);
-          if (self.style == AGMedallionStyleSquare && self.cornerRadius > 0.0f) {
-               addRoundedRect(contextRef, imageRect, self.cornerRadius);
-          } else {
-               CGContextAddEllipseInRect(contextRef, imageRect);
-          }
-          CGContextSetStrokeColorWithColor(contextRef, self.borderColor.CGColor);
-          CGContextSetShadowWithColor(contextRef, 
-                                      self.shadowOffset, 
-                                      self.shadowBlur, 
-                                      self.shadowColor.CGColor);
-          CGContextStrokePath(contextRef);
-     }
+    if (self.borderGradient != NULL) {
+        CGContextMoveToPoint(contextRef, 0, 0);
+        
+        if (self.clipShadow) {
+            // Add slightly expanded paths equating to outer border
+            if (self.style == AGMedallionStyleSquare && self.cornerRadius > 0.0f) {
+                addRoundedRect(contextRef, 
+                               CGRectInset(imageRect, -self.borderWidth/2, -self.borderWidth/2),
+                               self.cornerRadius + (float)self.borderWidth/2);
+
+            } else {
+                CGContextAddEllipseInRect(contextRef, CGRectInset(imageRect, 
+                                                                  -self.borderWidth/2, 
+                                                                  -self.borderWidth/2));
+            }
+            // Apply path to clip
+            CGContextClip(contextRef);
+        }
+        
+        // Draw sub-path for the shadow
+        // Save state to restore after
+        CGContextSaveGState(contextRef);
+        // Setup path
+        CGContextSetLineWidth(contextRef, self.borderWidth);
+        if (self.style == AGMedallionStyleSquare && self.cornerRadius > 0.0f) {
+            addRoundedRect(contextRef, imageRect, self.cornerRadius);
+        } else {
+            CGContextAddEllipseInRect(contextRef, imageRect);
+        }
+        CGContextSetLineWidth(contextRef, MAX(self.borderWidth - 0.5, 0));
+        CGContextSetStrokeColorWithColor(contextRef, [UIColor whiteColor].CGColor);
+        CGContextSetShadowWithColor(contextRef, 
+                                    self.shadowOffset, 
+                                    self.shadowBlur, 
+                                    self.shadowColor.CGColor);
+        CGContextStrokePath(contextRef);
+        CGContextRestoreGState(contextRef);
+        
+        // Recreate path in context
+        CGContextMoveToPoint(contextRef, 0, 0);
+        CGContextSetLineWidth(contextRef, self.borderWidth);
+        if (self.style == AGMedallionStyleSquare) {
+            addRoundedRect(contextRef, imageRect, self.cornerRadius);
+        } else {
+            CGContextAddEllipseInRect(contextRef, imageRect);
+        }
+        // Create fillable path
+        CGContextReplacePathWithStrokedPath(contextRef);
+        CGContextClip(contextRef);
+        // Draw border gradient
+        CGContextDrawLinearGradient(contextRef, self.borderGradient, CGPointMake(0, 0), CGPointMake(0, self.bounds.size.height), 0);
+    } else {
+        
+        CGContextMoveToPoint(contextRef, 0, 0);
+        if (self.clipShadow) {
+            // Add slightly expanded paths equating to outer border
+            if (self.style == AGMedallionStyleSquare && self.cornerRadius > 0.0f) {
+                addRoundedRect(contextRef, 
+                               CGRectInset(imageRect, -self.borderWidth/2, -self.borderWidth/2),
+                               self.cornerRadius + (float)self.borderWidth/2);
+                
+            } else {
+                CGContextAddEllipseInRect(contextRef, CGRectInset(imageRect, 
+                                                                  -self.borderWidth/2, 
+                                                                  -self.borderWidth/2));
+            }
+            // Apply path to clip
+            CGContextClip(contextRef);
+        }
+        
+        CGContextSetLineWidth(contextRef, self.borderWidth);
+        if (self.style == AGMedallionStyleSquare && self.cornerRadius > 0.0f) {
+            addRoundedRect(contextRef, imageRect, self.cornerRadius);
+        } else {
+            CGContextAddEllipseInRect(contextRef, imageRect);
+        }
+        CGContextSetStrokeColorWithColor(contextRef, self.borderColor.CGColor);
+        CGContextSetShadowWithColor(contextRef, 
+                                    self.shadowOffset, 
+                                    self.shadowBlur, 
+                                    self.shadowColor.CGColor);
+        CGContextStrokePath(contextRef);
+    }
      // Restore state
      CGContextRestoreGState(contextRef);
 }
