@@ -114,6 +114,7 @@
         self.medallionView.shadowOffset = CGSizeMake(0, 1);
         self.medallionView.shadowBlur = 2.f;
         self.medallionView.clipShadow = NO;
+        self.medallionView.clipsToBounds = YES;
         
     }
     
