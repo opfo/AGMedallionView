@@ -2,7 +2,7 @@
 
 AGMedallionView is a picture view control just like the one that Apple is using at the login screen in Mac OS X Lion.
 
-![Screenshot](http://dl.dropbox.com/u/2387405/Screenshots/AGMedallionView.png)
+![Screenshot](http://cbpowell.github.com/AGMedallionView/AGMedallionViewImage.png)
 
 ## Installation
 
