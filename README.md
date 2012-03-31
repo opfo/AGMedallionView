@@ -1,6 +1,8 @@
 ## AGMedallionView
 
-cbpowell/AGMedallionView is a bordered image view for iOS, with a customizable border (color/gradient/shadow). This version is forked from AGMedallionView, which was created as a picture view control just like the one that Apple is using at the login screen in Mac OS X Lion.
+__cbpowell__/AGMedallionView is a bordered image view (that is also a subclass of UIControl) for iOS, with a customizable border and shadow. The border can be a solid color OR a gradient (defined by a CGGradient), and the shadow color, offset, and blur can be specified. The view will be resized to fit any shadow blur and offset setting.
+
+This version is forked from AGMedallionView, which was created as a picture view control just like the one that Apple is using at the login screen in Mac OS X Lion.
 
 ![Screenshot](http://cbpowell.github.com/AGMedallionView/AGMedallionViewImage.png)
 
