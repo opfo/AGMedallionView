@@ -48,9 +48,13 @@ medallionView.borderGradient = newGradient;
 
 To handle shadow offsets that are pushed outside the view's rect (therefore getting chopped off), you can set the `clipShadow = YES`.
 
+## Todo
+- Resize image and border to accomodate shadow offsets that push the shadow outside the frame (which are then chopped off). This change would sacrifice image size (relative to the absolute frame) in order to draw the shadow.
+
+
 ## Contact
 
-Artur Grigor
+Artur Grigor (original creator of [AGMedallionView](https://github.com/arturgrigor/AGMedallionView))
 - [GitHub](http://github.com/arturgrigor)
 - [Twitter](http://twitter.com/arturgrigor)
 
