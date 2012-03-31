@@ -161,8 +161,9 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
     self.shadowColor = [UIColor colorWithRed:0.25f green:0.25f blue:0.25f alpha:.75f];
     self.shadowOffset = CGSizeMake(0, 1);
     self.shadowBlur = 2.f;
+    self.clipShadow = NO;
     self.backgroundColor = [UIColor clearColor];
-    self.clipsToBounds = NO;
+    self.clipsToBounds = YES;
 }
 
 - (id)init
@@ -210,14 +211,26 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
 - (void)drawRect:(CGRect)rect
 {
     // Image rect
-    /*
-     CGRect imageRect = CGRectMake((self.borderWidth), 
-     (self.borderWidth) , 
-     rect.size.width - (self.borderWidth * 2), 
-     rect.size.height - (self.borderWidth * 2));
-     */
-    CGRect imageRect = CGRectInset(self.bounds, self.borderWidth, self.borderWidth);
-    CGRect borderRect = CGRectInset(self.bounds, self.borderWidth/2, self.borderWidth/2);
+    CGRect imageRect, borderRect;
+    // These are the absolute largest possible given the specified frame
+    imageRect = CGRectInset(self.bounds, self.borderWidth, self.borderWidth);
+    borderRect = CGRectInset(self.bounds, self.borderWidth/2, self.borderWidth/2);
+    if (!self.clipShadow) {
+        // Not clipping shadow
+        
+        // Calculate rect required to contain original rects with a blurred edge plus offset
+        // Assumption: the shadow blur would take a 1px line and make it 3px, so inset by negative the shadow blur
+        CGRect shadowRect = CGRectOffset(CGRectInset(borderRect, -self.shadowBlur, -self.shadowBlur), self.shadowOffset.width * self.shadowBlur, self.shadowOffset.height * self.shadowBlur);
+        // Create insets based on differences of edges
+        UIEdgeInsets resizingInsets = UIEdgeInsetsMake(fabs(CGRectGetMinY(shadowRect) - CGRectGetMinY(self.bounds)), 
+                                                       fabs(CGRectGetMinX(shadowRect) - CGRectGetMinX(self.bounds)),
+                                                       fabs(CGRectGetMaxY(shadowRect) - CGRectGetMaxY(self.bounds)),
+                                                       fabs(CGRectGetMaxX(shadowRect) - CGRectGetMaxX(self.bounds)));
+        
+        // Resize image and border rects with insets
+        imageRect = UIEdgeInsetsInsetRect(imageRect, resizingInsets);
+        borderRect = UIEdgeInsetsInsetRect(borderRect, resizingInsets);
+    }
     
     // Start working with the mask
     CGColorSpaceRef maskColorSpaceRef = CGColorSpaceCreateDeviceGray();

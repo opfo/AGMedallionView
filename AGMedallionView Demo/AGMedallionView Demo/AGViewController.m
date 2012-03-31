@@ -46,6 +46,8 @@
     
     self.medallionViewA.image = [UIImage imageNamed:@"sample"];
     [self.medallionViewA addTarget:self action:@selector(medallionDidTap:) forControlEvents:UIControlEventTouchUpInside];
+    self.medallionViewA.shadowOffset = CGSizeMake(-2.0, -2.0);
+    
     
     self.medallionViewB.image = [UIImage imageNamed:@"sample"];
     [self.medallionViewB addTarget:self action:@selector(medallionDidTap:) forControlEvents:UIControlEventTouchUpInside];
@@ -108,9 +110,9 @@
         tappedView.borderGradient = NULL;
         tappedView.cornerRadius = 10.0f;
         tappedView.addShine = YES;
-        tappedView.shadowOffset = CGSizeMake(1.0, 2.0);
+        tappedView.shadowOffset = CGSizeMake(2.0, 2.0);
         tappedView.shadowBlur = 3.0f;
-        tappedView.clipShadow = YES;
+        tappedView.clipShadow = NO;
         
     } else {
         
