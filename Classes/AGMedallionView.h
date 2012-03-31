@@ -52,7 +52,7 @@ typedef enum
 @property (nonatomic, retain) UIImage *image;
 @property (nonatomic, retain) UIColor *borderColor;
 @property (nonatomic, assign) CGFloat borderWidth;
-@property (nonatomic, assign) CGGradientRef borderGradient;
+@property (nonatomic) CGGradientRef borderGradient;
 @property (nonatomic, assign) CGFloat cornerRadius;
 @property (nonatomic, assign) BOOL addShine;
 @property (nonatomic, retain) UIColor *shadowColor;

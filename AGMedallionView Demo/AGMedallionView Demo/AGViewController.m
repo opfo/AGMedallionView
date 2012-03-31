@@ -20,7 +20,7 @@
 
 #pragma mark - Properties
 
-@synthesize medallionView;
+@synthesize medallionViewA, medallionViewB;
 
 #pragma mark - Object Lifecycle
 
@@ -44,8 +44,24 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-    self.medallionView.image = [UIImage imageNamed:@"sample"];
-    [self.medallionView addTarget:self action:@selector(medallionDidTap:) forControlEvents:UIControlEventTouchUpInside];
+    self.medallionViewA.image = [UIImage imageNamed:@"sample"];
+    [self.medallionViewA addTarget:self action:@selector(medallionDidTap:) forControlEvents:UIControlEventTouchUpInside];
+    
+    self.medallionViewB.image = [UIImage imageNamed:@"sample"];
+    [self.medallionViewB addTarget:self action:@selector(medallionDidTap:) forControlEvents:UIControlEventTouchUpInside];
+    self.medallionViewB.style = AGMedallionStyleSquare;
+    self.medallionViewB.cornerRadius = 20.0f;
+    self.medallionViewB.addShine = NO;
+    self.medallionViewB.shadowOffset = CGSizeMake(1.0, 2.0);
+    self.medallionViewB.shadowBlur = 3.0f;
+    self.medallionViewB.clipShadow = YES;
+    
+    CGFloat colors[8] = {0.925, 0.953, 0.992, 1.000, 0.451, 0.482, 0.522, 1.000};
+    CGFloat colorStops[2] = {1.f, 0.f};
+    CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
+    CGGradientRef newGradient = CGGradientCreateWithColorComponents(rgbColorSpace, colors, colorStops, 2);
+    self.medallionViewB.borderGradient = newGradient;
+    CGGradientRelease(newGradient);
 }
 
 - (void)viewDidUnload
@@ -85,36 +101,28 @@
 
 - (void)medallionDidTap:(id)sender
 {
-    /*
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Tap" message:@"Medallion has been tapped." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [alertView show];
-    [alertView release];
-    */
+    AGMedallionView *tappedView = (AGMedallionView *)sender;
     
-    if (self.medallionView.style == AGMedallionStyleOriginal) {
+    if (tappedView == self.medallionViewB) {
         
-        self.medallionView.style = AGMedallionStyleSquare;
-        self.medallionView.cornerRadius = 20.0f;
-        self.medallionView.addShine = NO;
-        self.medallionView.shadowOffset = CGSizeMake(1.0, 2.0);
-        self.medallionView.shadowBlur = 3.0f;
-        self.medallionView.clipShadow = YES;
+        tappedView.borderGradient = NULL;
+        tappedView.cornerRadius = 10.0f;
+        tappedView.addShine = YES;
+        tappedView.shadowOffset = CGSizeMake(1.0, 2.0);
+        tappedView.shadowBlur = 3.0f;
+        tappedView.clipShadow = YES;
+        
+    } else {
+        
+        tappedView.addShine = NO;
+        tappedView.clipShadow = YES;
         
         CGFloat colors[8] = {0.925, 0.953, 0.992, 1.000, 0.451, 0.482, 0.522, 1.000};
         CGFloat colorStops[2] = {1.f, 0.f};
         CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
         CGGradientRef newGradient = CGGradientCreateWithColorComponents(rgbColorSpace, colors, colorStops, 2);
-        self.medallionView.borderGradient = newGradient;
-        
-    } else if (self.medallionView.style == AGMedallionStyleSquare) {
-        
-        self.medallionView.style = AGMedallionStyleOriginal;
-        self.medallionView.addShine = YES;
-        self.medallionView.borderGradient = NULL;
-        self.medallionView.shadowOffset = CGSizeMake(0, 1);
-        self.medallionView.shadowBlur = 2.f;
-        self.medallionView.clipShadow = NO;
-        self.medallionView.clipsToBounds = YES;
+        tappedView.borderGradient = newGradient;
+        CGGradientRelease(newGradient);
         
     }
     

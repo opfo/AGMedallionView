@@ -80,7 +80,10 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
 - (void)setBorderGradient:(CGGradientRef)aBorderGradient
 {
     if (borderGradient != aBorderGradient) {
-        borderGradient = aBorderGradient;
+        if (borderGradient != NULL) {
+            CGGradientRelease(borderGradient);
+        }
+        borderGradient = CGGradientRetain(aBorderGradient);
         
         [self setNeedsDisplay];
     }
@@ -141,8 +144,9 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
     [shadowColor release];
     [touchableControl release];
     
-    // Release the alpha gradient
+    // Release the gradients
     CGGradientRelease(alphaGradient);
+    CGGradientRelease(borderGradient);
     
     [super dealloc];
 }
@@ -158,6 +162,7 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
     self.shadowOffset = CGSizeMake(0, 1);
     self.shadowBlur = 2.f;
     self.backgroundColor = [UIColor clearColor];
+    self.clipsToBounds = NO;
 }
 
 - (id)init

@@ -15,6 +15,7 @@
     AGMedallionView *medallionView;
 }
 
-@property (nonatomic, retain) IBOutlet AGMedallionView *medallionView;
+@property (nonatomic, retain) IBOutlet AGMedallionView *medallionViewA;
+@property (nonatomic, retain) IBOutlet AGMedallionView *medallionViewB;
 
 @end
