@@ -49,6 +49,7 @@ medallionView.borderGradient = newGradient;
 ```
 
 The shadow color, blur, and offset can be manipulated as follows if the defaults aren't to your liking:
+
 ```objective-c
 medallionView.shadowColor = [UIColor grayColor];
 medallionView.shadowBlur = 3.0f;
