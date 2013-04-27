@@ -6,17 +6,17 @@
 //
 //  Created by Artur Grigor on 1/23/12.
 //  Copyright (c) 2012 Artur Grigor. All rights reserved.
-//  
+//
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-//  
+//
 //  This program is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU General Public License for more details.
-//  
+//
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -37,91 +37,14 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
 
 #pragma mark - Properties
 
-@synthesize style, image, borderColor, borderWidth, borderGradient, cornerRadius, addShine, shadowColor, shadowOffset, shadowBlur, clipShadow;
-
-- (void)setStyle:(AGMedallionStyle)aStyle
-{
-    if (style != aStyle) {
-        style = aStyle;
-        
-        [self setNeedsDisplay];
-    }
-}
-
-- (void)setImage:(UIImage *)aImage
-{
-    if (image != aImage) {
-        [image release];
-        image = [aImage retain];
-        
-        [self setNeedsDisplay];
-    }
-}
-
-- (void)setBorderColor:(UIColor *)aBorderColor
-{
-    if (borderColor != aBorderColor) {
-        [borderColor release];
-        borderColor = [aBorderColor retain];
-        
-        [self setNeedsDisplay];
-    }
-}
-
-- (void)setBorderWidth:(CGFloat)aBorderWidth
-{
-    if (borderWidth != aBorderWidth) {
-        borderWidth = aBorderWidth;
-        
-        [self setNeedsDisplay];
-    }
-}
-
-- (void)setBorderGradient:(CGGradientRef)aBorderGradient
-{
-    if (borderGradient != aBorderGradient) {
-        if (borderGradient != NULL) {
-            CGGradientRelease(borderGradient);
-        }
-        borderGradient = CGGradientRetain(aBorderGradient);
-        
-        [self setNeedsDisplay];
-    }
-}
-
-- (void)setCornerRadius:(CGFloat)aCornerRadius
-{
-    if (cornerRadius != aCornerRadius) {
-        cornerRadius = aCornerRadius;
-        
-        [self setNeedsDisplay];
-    }
-}
-
-- (void)setAddShine:(BOOL)aAddShine {
-    if (addShine != aAddShine) {
-        addShine = aAddShine;
-        
-        [self setNeedsDisplay];
-    }
-}
-
-- (void)setShadowColor:(UIColor *)aShadowColor
-{
-    if (shadowColor != aShadowColor) {
-        [shadowColor release];
-        shadowColor = [aShadowColor retain];
-        
-        [self setNeedsDisplay];
-    }
-}
+@synthesize style, borderWidth, borderGradient, cornerRadius, addShine, shadowOffset, shadowBlur, clipShadow;
 
 - (void)setShadowOffset:(CGSize)aShadowOffset
 {
     if (!CGSizeEqualToSize(shadowOffset, aShadowOffset)) {
         shadowOffset.width = aShadowOffset.width;
         shadowOffset.height = aShadowOffset.height;
-        
+
         [self setNeedsDisplay];
     }
 }
@@ -130,31 +53,17 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
 {
     if (shadowBlur != aShadowBlur) {
         shadowBlur = aShadowBlur;
-        
+
         [self setNeedsDisplay];
     }
 }
 
 #pragma mark - Object Lifecycle
 
-- (void)dealloc
-{
-    [image release];
-    [borderColor release];
-    [shadowColor release];
-    [touchableControl release];
-    
-    // Release the gradients
-    CGGradientRelease(alphaGradient);
-    CGGradientRelease(borderGradient);
-    
-    [super dealloc];
-}
-
 - (void)setup
 {
     alphaGradient = NULL;
-    
+
     self.addShine = YES;
     self.borderColor = [UIColor whiteColor];
     self.borderWidth = 5.f;
@@ -178,7 +87,7 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
     {
         [self setup];
     }
-    
+
     return self;
 }
 
@@ -189,7 +98,7 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
     {
         [self setup];
     }
-    
+
     return self;
 }
 
@@ -204,7 +113,7 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
         alphaGradient = CGGradientCreateWithColorComponents(grayColorSpace, colors, colorStops, 3);
         CGColorSpaceRelease(grayColorSpace);
     }
-    
+
     return alphaGradient;
 }
 
@@ -217,37 +126,37 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
     borderRect = CGRectInset(self.bounds, self.borderWidth/2, self.borderWidth/2);
     if (!self.clipShadow) {
         // Not clipping shadow
-        
+
         // Calculate rect required to contain original rects with a blurred edge plus offset
         // Assumption: the shadow blur would take a 1px line and make it 3px, so inset by negative the shadow blur
         CGRect shadowRect = CGRectOffset(CGRectInset(borderRect, -self.shadowBlur, -self.shadowBlur), self.shadowOffset.width * self.shadowBlur, self.shadowOffset.height * self.shadowBlur);
         // Create insets based on differences of edges
-        UIEdgeInsets resizingInsets = UIEdgeInsetsMake(fabs(CGRectGetMinY(shadowRect) - CGRectGetMinY(self.bounds)), 
+        UIEdgeInsets resizingInsets = UIEdgeInsetsMake(fabs(CGRectGetMinY(shadowRect) - CGRectGetMinY(self.bounds)),
                                                        fabs(CGRectGetMinX(shadowRect) - CGRectGetMinX(self.bounds)),
                                                        fabs(CGRectGetMaxY(shadowRect) - CGRectGetMaxY(self.bounds)),
                                                        fabs(CGRectGetMaxX(shadowRect) - CGRectGetMaxX(self.bounds)));
-        
+
         // Resize image and border rects with insets
         imageRect = UIEdgeInsetsInsetRect(imageRect, resizingInsets);
         borderRect = UIEdgeInsetsInsetRect(borderRect, resizingInsets);
     }
-    
+
     // Start working with the mask
     CGColorSpaceRef maskColorSpaceRef = CGColorSpaceCreateDeviceGray();
     CGContextRef mainMaskContextRef = CGBitmapContextCreate(NULL,
-                                                        self.bounds.size.width, 
-                                                        self.bounds.size.height, 
-                                                        8, 
-                                                        self.bounds.size.width, 
-                                                        maskColorSpaceRef, 
+                                                        self.bounds.size.width,
+                                                        self.bounds.size.height,
+                                                        8,
+                                                        self.bounds.size.width,
+                                                        maskColorSpaceRef,
                                                         0);
 
     CGContextRef shineMaskContextRef = CGBitmapContextCreate(NULL,
-                                                             rect.size.width, 
-                                                             rect.size.height, 
-                                                             8, 
-                                                             rect.size.width, 
-                                                             maskColorSpaceRef, 
+                                                             rect.size.width,
+                                                             rect.size.height,
+                                                             8,
+                                                             rect.size.width,
+                                                             maskColorSpaceRef,
                                                              0);
     CGColorSpaceRelease(maskColorSpaceRef);
     CGContextSetFillColorWithColor(mainMaskContextRef, [UIColor blackColor].CGColor);
@@ -256,7 +165,7 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
     CGContextFillRect(shineMaskContextRef, rect);
     CGContextSetFillColorWithColor(mainMaskContextRef, [UIColor whiteColor].CGColor);
     CGContextSetFillColorWithColor(shineMaskContextRef, [UIColor whiteColor].CGColor);
-    
+
     // Create main mask shape
     CGContextMoveToPoint(mainMaskContextRef, 0, 0);
     if (self.style == AGMedallionStyleSquare && self.cornerRadius > 0.0f) {
@@ -265,7 +174,7 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
         CGContextAddEllipseInRect(mainMaskContextRef, imageRect);
     }
     CGContextFillPath(mainMaskContextRef);
-    
+
     // Create shine mask shape
     CGContextTranslateCTM(shineMaskContextRef, -(rect.size.width / 4), rect.size.height / 4 * 3);
     CGContextRotateCTM(shineMaskContextRef, -45.f);
@@ -276,32 +185,32 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
     } else {
         shineHeight = rect.size.height;
     }
-    CGContextFillRect(shineMaskContextRef, CGRectMake(0, 
-                                                      0, 
-                                                      rect.size.width / 8 * 5, 
+    CGContextFillRect(shineMaskContextRef, CGRectMake(0,
+                                                      0,
+                                                      rect.size.width / 8 * 5,
                                                       shineHeight));
-    
+
     CGImageRef mainMaskImageRef = CGBitmapContextCreateImage(mainMaskContextRef);
     CGImageRef shineMaskImageRef = CGBitmapContextCreateImage(shineMaskContextRef);
     CGContextRelease(mainMaskContextRef);
     CGContextRelease(shineMaskContextRef);
     // Done with mask context
-    
+
     CGContextRef contextRef = UIGraphicsGetCurrentContext();
     CGContextSaveGState(contextRef);
 
     CGContextTranslateCTM(contextRef, 0, rect.size.height);
     CGContextScaleCTM(contextRef, 1.0, -1.0);
-    
+
     CGContextSaveGState(contextRef);
-    
+
     // Draw image
     CGContextClipToMask(contextRef, self.bounds, mainMaskImageRef);
     CGContextDrawImage(contextRef, imageRect, self.image.CGImage);
-    
+
     CGContextRestoreGState(contextRef);
     CGContextSaveGState(contextRef);
-    
+
     // Clip to shine's mask
     CGContextClipToMask(contextRef, self.bounds, mainMaskImageRef);
     CGContextClipToMask(contextRef, self.bounds, shineMaskImageRef);
@@ -314,32 +223,32 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
     // Done with image
 
     CGContextRestoreGState(contextRef);
-    
 
-    
+
+
     if (self.borderGradient != NULL) {
         CGContextMoveToPoint(contextRef, 0, 0);
-        
+
         if (self.clipShadow) {
             // Add slightly expanded paths equating to outer border
             if (self.style == AGMedallionStyleSquare && self.cornerRadius > 0.0f) {
-                addRoundedRect(contextRef, 
+                addRoundedRect(contextRef,
                                CGRectInset(borderRect, -self.borderWidth/2, -self.borderWidth/2),
                                self.cornerRadius + (float)self.borderWidth/2);
 
             } else {
-                CGContextAddEllipseInRect(contextRef, CGRectInset(borderRect, 
-                                                                  -self.borderWidth/2, 
+                CGContextAddEllipseInRect(contextRef, CGRectInset(borderRect,
+                                                                  -self.borderWidth/2,
                                                                   -self.borderWidth/2));
             }
             // Apply path to clip
             CGContextClip(contextRef);
         }
-        
+
         // Draw sub-path for the shadow
         // Save state to restore after
         CGContextSaveGState(contextRef);
-        
+
         // Setup path for clipping
         CGContextSetLineWidth(contextRef, self.borderWidth);
         if (self.style == AGMedallionStyleSquare && self.cornerRadius > 0.0f) {
@@ -347,14 +256,14 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
         } else {
             CGContextAddEllipseInRect(contextRef, borderRect);
         }
-        
+
         CGContextSetLineWidth(contextRef, MAX(self.borderWidth, 0));
-        
+
         // Convert to stroked path and clip
         CGContextReplacePathWithStrokedPath(contextRef);
         CGContextAddRect(contextRef, self.bounds);
         CGContextEOClip(contextRef);
-        
+
         // Setup path for shadow drawing
         CGContextSetLineWidth(contextRef, self.borderWidth);
         if (self.style == AGMedallionStyleSquare && self.cornerRadius > 0.0f) {
@@ -362,19 +271,19 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
         } else {
             CGContextAddEllipseInRect(contextRef, borderRect);
         }
-        
+
         CGContextSetLineWidth(contextRef, MAX(self.borderWidth - 1.0, 0));
         CGContextSetStrokeColorWithColor(contextRef, [UIColor whiteColor].CGColor);
-        CGContextSetShadowWithColor(contextRef, 
-                                    self.shadowOffset, 
-                                    self.shadowBlur, 
+        CGContextSetShadowWithColor(contextRef,
+                                    self.shadowOffset,
+                                    self.shadowBlur,
                                     self.shadowColor.CGColor);
-        
+
         CGContextStrokePath(contextRef);
-         
+
         CGContextRestoreGState(contextRef);
-        
-        
+
+
         // Recreate path in context
         CGContextMoveToPoint(contextRef, 0, 0);
         CGContextSetLineWidth(contextRef, self.borderWidth);
@@ -388,26 +297,26 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
         CGContextClip(contextRef);
         // Draw border gradient
         CGContextDrawLinearGradient(contextRef, self.borderGradient, CGPointMake(0, 0), CGPointMake(0, self.bounds.size.height), 0);
-        
+
     } else {
-        
+
         CGContextMoveToPoint(contextRef, 0, 0);
         if (self.clipShadow) {
             // Add slightly expanded paths equating to outer border
             if (self.style == AGMedallionStyleSquare && self.cornerRadius > 0.0f) {
-                addRoundedRect(contextRef, 
+                addRoundedRect(contextRef,
                                CGRectInset(borderRect, -self.borderWidth/2, -self.borderWidth/2),
                                self.cornerRadius + (float)self.borderWidth/2);
-                
+
             } else {
-                CGContextAddEllipseInRect(contextRef, CGRectInset(borderRect, 
-                                                                  -self.borderWidth/2, 
+                CGContextAddEllipseInRect(contextRef, CGRectInset(borderRect,
+                                                                  -self.borderWidth/2,
                                                                   -self.borderWidth/2));
             }
             // Apply path to clip
             CGContextClip(contextRef);
         }
-        
+
         CGContextSetLineWidth(contextRef, self.borderWidth);
         if (self.style == AGMedallionStyleSquare && self.cornerRadius > 0.0f) {
             addRoundedRect(contextRef, borderRect, self.cornerRadius);
@@ -415,9 +324,9 @@ void addRoundedRect(CGContextRef ctx, CGRect rect, float cornerRadius);
             CGContextAddEllipseInRect(contextRef, borderRect);
         }
         CGContextSetStrokeColorWithColor(contextRef, self.borderColor.CGColor);
-        CGContextSetShadowWithColor(contextRef, 
-                                    self.shadowOffset, 
-                                    self.shadowBlur, 
+        CGContextSetShadowWithColor(contextRef,
+                                    self.shadowOffset,
+                                    self.shadowBlur,
                                     self.shadowColor.CGColor);
         CGContextStrokePath(contextRef);
     }

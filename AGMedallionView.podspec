@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "AGMedallionView"
-  s.version      = "1.1.0"
+  s.version      = "1.2.0"
   s.summary      = "AGMedallionView is a picture view control just like the one that Apple is using at the login screen in Mac OS X Lion."
   s.homepage     = "https://github.com/opfo/AGMedallionView.git"
   s.license      = 'MIT'
